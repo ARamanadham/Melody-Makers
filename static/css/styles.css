@@ -1,0 +1,137 @@
+:root {
+    --primaryCol: #f3f3f3;
+    --secondCol: #ffffff;
+    --accentCol: #003c18;
+    --backgroundCol: #a0d9f6c8;
+    --textCol: #000000;
+
+    /* --custom-embellishment-name:; */
+}
+
+/*  ----- Viewport ----- elements inherited by all remaining elements ----- */
+body {
+    color: var(--textCol);
+    background-color: var(--backgroundCol);
+    /* Define with at least one font name and its related generic family name.*/
+
+}
+
+legend {
+    background-color: var(--primaryCol);
+    border-radius: 0.5rem;
+    border: 1px solid var(--accentCol);
+    padding: 0.5rem;
+    font-size: 115%;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+table,
+th,
+td {
+    margin: auto;
+    text-align: center;
+    border-radius: 1rem;
+    border: 1px solid var(--secondCol);
+
+    border-collapse: collapse;
+    padding: 10px;
+}
+
+.data {
+    padding: 20px;
+}
+
+.nav-links {
+    margin: 1rem;
+    text-align: center;
+    padding: 1rem;
+}
+
+a {
+    color: var(--accentCol);
+    padding: 0.5rem;
+}
+
+h1,
+h2 {
+    margin: 0;
+    padding: 2rem;
+    background-color: var(--primaryCol);
+    text-align: center;
+}
+
+form {}
+
+form p {
+    margin: 1rem;
+
+
+
+}
+
+form input {}
+
+.formContainer {
+    padding: 20px;
+    display: grid;
+    place-items: center;
+}
+
+.DeleteIntruc,
+.DeleteWarning {
+    color: red;
+}
+
+#insert {
+    padding: 20px;
+}
+
+#update {
+    padding: 20px;
+}
+
+#delete {
+    padding: 20px;
+}
+
+label {
+    padding: 5px;
+}
+
+.info {
+    margin: auto;
+    justify-content: center;
+    /* Centers horizontally */
+    align-items: center;
+    padding: 20px;
+    display: flex;
+    gap: 5rem
+}
+
+.btn {
+    display: inline-block;
+    margin: 0.3rem;
+    padding: 0.145rem .6rem;
+    text-align: center;
+    text-decoration: none;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: small;
+    color: black;
+    background-color: #eeeded;
+    border: 1px solid black;
+    border-radius: 0.15rem;
+    cursor: default;
+}
+
+.btn:hover {
+    background-color: #e0e0e0;
+    border: 1px solid black;
+}
+
+figcaption {
+    text-align: center;
+}
+
