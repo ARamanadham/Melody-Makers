@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css')}}">
+        <title>Artists</title>
+    </head>
+    <body>
+        <h1>Artists</h1>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/users.j2">Users</a>
+            <a href="/playlists.j2">Playlists</a>
+            <a href="/playlistsongs.j2">PlaylistSongs</a>
+            <a href="/songs.j2">Songs</a>
+            <a href="/artistsongs.j2">ArtistSongs</a>
+            <a href="/artists.j2">Artists</a>
+        </div>
+        <div class="data" onload="displayTable()">
+            <table id="dataTable">
+                <tr>
+                    {% for key in data[0].keys() %}
+                    <th>{{ key }}</th>
+                    {% endfor %}
+                </tr>
+                {% for item in data %}
+                <tr>
+                    {% for key in item.keys() %}
+                    <td> {{item[key]}} </td>
+                    {% endfor %}
+
+                    <td><a href="{{ url_for('artists', artistIdUpdate=item.artistId) }} #update" >Edit</a></td>
+                    <td><a href="{{ url_for('artists', artistId=item.artistId) }} #delete">Delete</a></td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+        <!-- Adding Artist -->
+        <div id="insert" class="formContainer">
+            <!-- Ensuring duplicate artists do not break the page -->
+            {% with messages = get_flashed_messages(with_categories=True) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{category}}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <form id="AddArtist" action="/artists.j2" method="POST">
+                <fieldset>
+                    <legend><strong>Add Artist</strong></legend>
+                    <p>
+                        <label for="artistName">Artist Name (Required)</label>
+                        <input type="text" class="form-control" id="artistName" name="artistName" placeholder="Beyonce" required>
+                        <label for="bio">Artist Biography</label>
+                        <input type="text" class="form-control" id="artistBio" name="artistBio">
+                    </p>
+                    <label for="submit">
+                        <input type="submit" value="Add Artist" name="AddArtist" class="btn">
+                        <a href="/artists.j2" class="btn">Cancel</a>
+                    </label>
+                </fieldset>
+            </form>
+        </div>
+
+        <!-- Update Artist-->
+         <div id="update" class="formContainer">
+            <!-- checks if value exists and assigns it -->
+            {% if request.args.get('artistIdUpdate') %}
+                {% set artistIdUpdate = request.args.get('artistIdUpdate')|int %}
+                <form id="UpdateArtistInfo" action="UpdateArtistInfo/{{artistIdUpdate}}" method="POST">
+                    <fieldset>
+                        <legend><strong>Update Artist</strong></legend>
+                        <p>
+                            <label for="artistId">Artist Id</label>
+                            <input type="text" name="artistIdUpdate" value="{{artistIdUpdate}}" disabled>
+                        {% for artists in data %}
+                            {% if artistIdUpdate == artists.artistId %}
+                            <label for="artistName">Artist Name</label>
+                            <input type="text" name="artistName" value="{{artists.artistName}}">
+
+                            <label for="artistBio">Artist Bio</label>
+                            <input type="text" name="artistBio" value="{{artists.artistBio}}">
+                            {% endif %}
+                        {% endfor %}
+                        </p>
+                        <label for="submit">
+                            <button type="submit" name="UpdateArtistInfo" class="btn">Update Artist</button>
+                            <a href="/artists.j2" class="btn>Cancel</a>
+                        </label>
+                    </fieldset>
+                </form>
+            {% endif %}
+         </div>
+
+        <!-- Delete Artist-->
+         <div id="delete" class="formContainer">
+            <!-- checks artistId value and assigns it to artistId -->
+            {% if request.args.get('artistId') %}
+                {% set artistId = request.args.get('artistId') %}
+
+                <h2 class="DeleteWarning">Warning! This is an irreversible action.</h2>
+
+                <form id="DeleteArtist" action="DeleteArtistInfo/{{artistId}}" method="POST">
+                    <fieldset>
+                        <legend><strong>Delete Artist Info</strong></legend>
+                        <p class="DeleteIntruc">
+                            Check the box to confirm.
+                        </p>
+                        <p>
+                            <input type="checkbox" name="ConfirmDelete" required>
+                            <label for="ConfirmDelete">Yes, delete from database</label>
+                        </p><br>
+
+                        <p>
+                            <label for="artistId">Artist Id</label>
+                            <input type="text" name="artistId" value="{{artistId}}" disabled>
+                        </p>
+                        <p>
+                            <button type="submit" name="DeleteNewArtist" class="btn">Delete</button>
+                            <a href="/artists.j2" class="btn">Cancel</a>
+                        </p>
+                    </fieldset>
+                </form>
+            {% endif %}
+         </div>
+    </body>
+</html>

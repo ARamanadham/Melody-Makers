@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css')}}">
+        <title>Songs</title>
+    </head>
+    <body>
+        <h1>Track List</h1>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/users.j2">Users</a>
+            <a href="/playlists.j2">Playlists</a>
+            <a href="/playlistsongs.j2">PlaylistSongs</a>
+            <a href="/songs.j2">Songs</a>
+            <a href="/artistsongs.j2">ArtistSongs</a>
+            <a href="/artists.j2">Artists</a>
+        </div>
+        <div class="data">
+            <table id="dataTable">
+                <tr>
+                    {% for key in data[0].keys() %}
+                    <th>{{ key }}</th>
+
+                    {% endfor %}
+                </tr>
+					<!-- Now, iterate through every item in data -->{% for item in data %}
+					    <tr>
+						    <!-- Then iterate through every key in the current item dictionary -->
+                            {% for key in item.keys() %}
+
+						    <!-- Create a <td> element with the value of that key in it -->
+						    <td> {{item[key]}} </td> 
+                            {% endfor %}
+
+                            <!-- Create our edit/delete buttons -->
+						    <td><a href="{{ url_for('songs', songIdUpdate=item.songId) }} #update" >Edit</a></td>
+						    <td><a href="{{ url_for('songs', songId=item.songId) }} #delete">Delete</a></td>
+
+					    </tr> 
+                        {% endfor %} 
+
+            </table>
+        </div>
+        <!-- Adding Songs -->
+        <div id="insert" class="formContainer">
+            <!-- Ensuring duplicate usernames do not break the page -->
+            {% with messages = get_flashed_messages(with_categories=True) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{category}}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <form id="AddSong" method="POST">
+
+                <fieldset>
+                    <legend><strong>Add a Song</strong></legend>
+                        <label for="title">Song Title (Required)<br>
+                        </label>
+                        
+                        <input type="text" class="form-control" id="title" name="title" placeholder="Song 1" required>
+                        
+                        <label for="hours">Hours</label>
+                        <input type="number" class="form-control" id="duration" name="hours" value="00" min="0" max="24">
+                        
+                        <label for="minutes">Minutes (Required)</label>
+                        <input type="number" class="form-control" id="duration" name="minutes" value="00" min="0" max="59" required>
+                        
+                        <label for="seconds">Seconds (Required)</label>
+                        <input type="number" class="form-control" id="duration" name="seconds" value="00" min="0" max="59" required>
+                        
+                        <label for="releaseDate">Release Date (Required)</label>
+                        <input type="date" class="form-control" id="releaseDate" name="releaseDate" placeholder="2023-01-04" required>
+                    </p>
+                    <label for="submit">
+                        <input type="submit" value="Save new Song" name="NewSong" class="btn">
+                        <a href="/songs.j2" class="btn">Cancel</a>
+                    </label>
+                </fieldset>
+
+            </form>
+        </div>
+        <!-- Update Song-->
+         <div id="update" class="formContainer">
+            <!-- Checks if the value songIdUpdate exist and assignes it to songId-->
+            {% if request.args.get('songIdUpdate') %}
+               {% set songIdUpdate = request.args.get('songIdUpdate')|int %}
+
+            <form id="UpdateSongs" action="UpdateSongs/{{songIdUpdate}}" method="POST">
+                <fieldset>
+                    <legend><strong>Update Song</strong></legend>
+                    <p>
+
+                        <label for="songId">Song Id</label>
+                        <input type="text" name="songId" value="{{songIdUpdate}}" disabled required>
+
+                        {% for songs in data %}
+                            {% if songIdUpdate == songs.songId %}
+                        <label for="title">Song Title</label>
+                        <input type="text" class="form-control" id="title" name="title" value="{{songs.title}}">
+
+                        <label for="songlength">Duration</label>
+                        <input type="text" class="form-control" id="duration" name="duration" value="{{songs.duration}}" pattern="^([0-9]|[0-1][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$">
+                        <label for="releaseDate">Release Date</label>
+                        <input type="date" class="form-control" id="releaseDate" name="releaseDate" value="{{songs.releaseDate}}" placeholder="{{songs.releaseDate}}">
+                            {% endif %}
+                        {% endfor %}
+                    </p>
+                    <label for="submit">
+                        <button type="submit" name="UpdateSongs" class="btn">Update Song</button>
+                        <a href="/songs.j2" class="btn">Cancel</a>
+                    </label>    
+                </fieldset>
+            </form>
+                {% endif %}
+         </div>
+        <!-- Delete Song-->
+         <div id="delete" class="formContainer">
+            <!-- Checks if the value songId exist and assignes it to songId-->
+            {% if request.args.get('songId') %}
+               {% set songId = request.args.get('songId') %}
+
+            <h2 class="DeleteWarning">Warning! This is an irreversible action.</h2>
+            <form id="DeleteSongs" action="DeleteSongInfo/{{songId}}" method="POST">
+                <fieldset>
+                    <legend><strong>Delete Song Info</strong></legend>
+                    <p class="DeleteIntruc">
+                        Check the box to confirm.
+                    </p>
+                    <p>
+                        <input type="checkbox" name="ConfirmDelete" required>
+                        <label for="ConfirmDelete">Yes, delete from database</label>
+                    </p>
+                    <br>
+                    <p>
+                        <label for="songId">Song Id (Required)</label>
+                        <input type="text" name="songId" value="{{songId}}" disabled>
+                    </p>
+                    <label for="submit">
+                        <button type="submit" name="DeleteSong" class="btn">Delete</button> 
+                        <a href="/songs.j2" class="btn">Cancel</a>
+                    </label>
+                </fieldset>
+            </form>
+            {% endif %}
+         </div>
+    </body>
+</html>

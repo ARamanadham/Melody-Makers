@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css')}}">
+        <title>Melody Makers</title>
+    </head>
+    <body>
+        <h1>Melody Makers</h1>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/users.j2">Users</a>
+            <a href="/playlists.j2">Playlists</a>
+            <a href="/playlistsongs.j2">PlaylistSongs</a>
+            <a href="/songs.j2">Songs</a>
+            <a href="/artistsongs.j2">ArtistSongs</a>
+            <a href="/artists.j2">Artists</a>
+        </div>
+        <div class="info">
+            <div>
+            <dl>
+                <dt>Users</dt>
+                <dd>- Display information about Melody Maker users</dd>
+                <dd>- Add a new Melody Maker user</dd>
+                <dd>- Edit user information</dd>
+                <dd>- Delete a user</dd>
+                <dt>Artists</dt>
+                <dd>- Display all artist information</dd>
+                <dd>- Add a new artist to the DB</dd>
+                <dd>- Edit artist information</dd>
+                <dt>Songs</dt>
+                <dd>- Display all song information</dd>
+                <dd>- Add a song to the DB</dd>
+                <dd>- Delete a song from the DB</dd>
+                <dt>Playlists</dt>
+                <dd>- Display all playlist information</dd>
+                <dd>- Create a new playlist</dd>
+                <dd>- Edit playlist information</dd>
+                <dt>ArtistSongs</dt>
+                <dd>- Display songs produced by artists</dd>
+                <dd>- Add a artist song combination</dd>
+                <dd>- Update artist song combinations</dd>
+                <dd>- Delete a artist song combination</dd>
+                <dt>PlaylistSongs</dt>
+                <dd>- Display all songs and which playlist they are in</dd>
+                <dd>- Display songs within a specific playlist</dd>
+                <dd>- Delete a song within a playlist</dd>
+            </dl>
+            </div>        
+            <div>
+            <figure>
+                <img src="{{ url_for('static', filename='schema.jpg') }}" alt="Image of Melody Makers database showing the Users, Playlists, PlaylistSongs, Songs, ArtistSongs,and Artists tables" title="&copy; 2025 Y. Hernandez, A. Ramanadham">
+                <figcaption>Melody Makers database Schema.</figcaption>
+
+            </figure>
+            </div>
+        </div>
+
+    </body>
+</html>

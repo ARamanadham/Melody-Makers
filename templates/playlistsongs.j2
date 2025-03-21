@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css')}}">
+        <title>PlaylistSongs</title>
+    </head>
+    <body>
+        <h1>Playlist Songs</h1>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/users.j2">Users</a>
+            <a href="/playlists.j2">Playlists</a>
+            <a href="/playlistsongs.j2">PlaylistSongs</a>
+            <a href="/songs.j2">Songs</a>
+            <a href="/artistsongs.j2">ArtistSongs</a>
+            <a href="/artists.j2">Artists</a>
+        </div>
+        <div class="playlistSongsData"  >
+            <table id="playlistSongsDataTable">
+                <tr>
+                    {% for key in playlistSongsData[0].keys() %}
+                    <th>{{ key }}</th>
+
+                    {% endfor %}
+                </tr>
+					<!-- Now, iterate through every item in data -->{% for item in playlistSongsData %}
+					    <tr>
+						    <!-- Then iterate through every key in the current item dictionary -->
+                            {% for key in item.keys() %}
+
+						    <!-- Create a <td> element with the value of that key in it -->
+						    <td> {{item[key]}} </td> 
+                            {% endfor %}
+
+                            <!-- Create our edit/delete buttons -->
+						    <td><a href="{{ url_for('playlistsongs', playlistTitleUpdate=item.playlistSongsId, playlistSongTitleUpdate=item.songId) }} #update" >Edit</a></td>
+						    <td><a href="{{ url_for('playlistsongs', playlistSongsId=item.playlistSongsId) }} #delete">Delete</a></td>
+
+					    </tr> 
+                        {% endfor %} 
+
+            </table>
+        </div>
+        <!-- Adding Playlist Song -->
+        <div id="insert" class="formContainer">
+            <form id="AddPlaylistSong" action="/playlistsongs.j2" method="POST">
+                <fieldset>
+                    
+                    <legend><strong>Add Playlist Song</strong></legend>
+                    <p>
+                        
+
+                        <label for="playlistTitleDropdown">Playlist Title (Required)</label>
+                        <select name="playlistId" required>
+                            <option value="0" disabled selected>Select Playlist</option>
+                            {% for item in playlistTitleData %}
+                                <option value="{{item.playlistId}}">{{item.playlistTitle}}</option>
+                            {% endfor %}
+                        </select>
+
+                        <label for="titleDropdown">Song Title (Required)</label>
+                        <select name="songId" required>
+                            <option value="0" disabled selected>Select a Song</option>
+                            {% for item in songsData %}
+                                <option value="{{item.songId}}">{{item.title}}</option>
+                            {% endfor %}
+                        </select>
+                    </p>
+
+                    <label for="submit">
+                        <input type="submit" value="Save new PlaySong" name="AddPlaylistSong" class="btn">
+                        <a href="/playlistsongs.j2" class="btn">Cancel</a>
+                    </label>
+                </fieldset>
+            </form>
+        </div>
+        <!-- Update Playlist Song-->
+         <div id="update" class="formContainer">
+            <!-- Checks if the value userId exist and assignes it to userId-->
+            {% if request.args.get('playlistTitleUpdate') %}
+               {% set playlistTitleUpdate = request.args.get('playlistTitleUpdate')|int %}
+               {% set playlistSongTitleUpdate = request.args.get('playlistSongTitleUpdate')|int %}
+
+            <form id="UpdatePlaylistSong" action="UpdatePlaylistSong/{{playlistTitleUpdate}}" method="POST">
+                <fieldset>
+                    <legend><strong>Update Playlist Song</strong></legend>
+                    <p>
+                        <label for="playlistSongsIdField">Playlist Songs Id</label>
+                        <input type="text" name="playlistTitleUpdate" value="{{playlistTitleUpdate}}" disabled>
+                    </p>
+                    <p>
+                        {% for item in playlistSongsData %}
+                            {% if playlistTitleUpdate == item.playlistSongsId %}
+                            <label for="oldPlaylistTitle">Old Playlist Title</label>
+                            <input type="text" name="oldPlaylistId" value="{{item.playlistTitle}}" disabled>
+                            {% endif %}
+                        {% endfor %}
+   
+                        <label for="playlistTitleDropdown">New Playlist Title (Required)</label>
+                        <select name="playlistId" required>
+                            <option value="0" disabled selected>Select Playlist</option>
+                            {% for item in playlistTitleData %}
+                                <option value="{{item.playlistId}}">{{item.playlistTitle}}</option>
+                            {% endfor %}
+                        </select>
+                    </p>
+                    <p>
+                        {% for item in playlistSongsData %}
+                            {% if playlistTitleUpdate == item.playlistSongsId %}
+                            <label for="oldSongTitle">Old Song Title</label>
+                            <input type="text" name="oldSongTitle" value="{{item.songTitle}}" disabled>
+                            {% endif %}
+                        {% endfor %}                 
+
+                        <label for="titleDropdown">New Song Title (Required)</label>
+                        <select name="songId">
+                            <option value="" selected>None</option>
+                            {% for item in songsData %}
+                                <option value="{{item.songId}}">{{item.title}}</option>
+                            {% endfor %}
+                        </select>
+                    </p>
+
+                    <label for="submit">
+                        <button type="submit" name="UpdatePlaylistSong">Update Playlist Song</button>
+                        <a href="/playlistsongs.j2" class="btn">Cancel</a>
+                    </label>
+                </fieldset>
+            </form>      
+                {% endif %}      
+         </div>
+        <!-- Delete Playlist Song-->
+         <div id="delete" class="formContainer">
+            <!-- Checks if the value playlistSongsId exist and assignes it to playlistSongsId-->
+            {% if request.args.get('playlistSongsId') %}
+               {% set playlistSongsId = request.args.get('playlistSongsId') %}
+            <h2 class="DeleteWarning">Warning! This is an irreversible action.</h2>
+            <form id="DeletePlaylistSongs" action="DeletePlaylistSongs/{{playlistSongsId}}" method="POST">
+                <fieldset>
+                    <legend><strong>Delete Playlist Info</strong></legend>
+                    <p class="DeleteIntruc">
+                        Check the box to confirm.
+                    </p>
+                    <p>
+                        <input type="checkbox" name="ConfirmDelete" required>
+                        <label for="ConfirmDelete">Yes, delete from database</label>
+                    </p>
+                    <br>
+                    <p>
+                        <label for="playlistSongsId">Playlist Song Id</label>
+                        <input type="text" name="playlistSongsId" value="{{playlistSongsId}}" disabled>
+                    </p>        
+                    <p>
+                        <button type="submit" name="DeletePlaylistSongs" class="btn">Delete Playlist Song</button> 
+                        <a href="/playlistsongs.j2" class="btn">Cancel</a>
+                    </p>      
+                </fieldset>
+            </form>
+            {% endif %}
+         </div>
+    </body>
+</html>

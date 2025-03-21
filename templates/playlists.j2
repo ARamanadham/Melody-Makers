@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css')}}">
+        <title>Playlists</title>
+    </head>
+    <body>
+        <h1>Playlists</h1>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/users.j2">Users</a>
+            <a href="/playlists.j2">Playlists</a>
+            <a href="/playlistsongs.j2">PlaylistSongs</a>
+            <a href="/songs.j2">Songs</a>
+            <a href="/artistsongs.j2">ArtistSongs</a>
+            <a href="/artists.j2">Artists</a>
+        </div>
+        <div class="data" onload="displayTable()">
+            <table id="dataTable">
+                <tr>
+                   {% for key in data[0].keys() %}
+                   <th>{{ key }}</th>
+                   {% endfor %}
+                </tr>
+                {% for item in data %}
+                <tr>
+                    {% for key in item.keys() %}
+                    <td> {{item[key]}} </td>
+                    {% endfor %}
+
+                    <td><a href="{{ url_for('playlists', playlistIdUpdate=item.playlistId, playlistUserUpdate=item.userId) }} #update">Edit</a></td>
+                    <td><a href="{{ url_for('playlists', playlistId=item.playlistId) }} #delete">Delete</a></td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+        <!-- Adding Playlists -->
+        <div id="insert" class="formContainer">
+            <form id="AddPlaylists" action="/playlists.j2" method="POST">
+                <fieldset>
+                    <legend><strong>Create Playlist</strong></legend>
+                    <p>
+                        <label for="playlistTitle">Playlist Title (Required)</label>
+                        <input type="text" class="form-control" id="playlistTitle" name="playlistTitle" placeholder="Hip-Hop">
+                        <label for="usernameDropdown">Select Username</label>
+                        <select name="userId">
+                            <option value="0" disabled selected></option>
+                            {% for item in userUsernameData %}
+                                <option value="{{item.userId}}">{{item.username}}</option>
+                            {% endfor %}
+                        </select>
+                    </p>
+                    <label for="submit">
+                        <input type="submit" value="Create Playlist" name="AddPlaylists" class="btn">
+                        <a href="/playlists.j2" class="btn">Cancel</a>
+                    </label>
+                </fieldset>
+            </form>
+        </div>
+        
+        <!-- Update Playlists-->
+         <div id="update" class="formContainer">
+            <!-- Checks if value exits and assigns it -->
+            {% if request.args.get('playlistIdUpdate') %}
+                {% set playlistIdUpdate = request.args.get('playlistIdUpdate')|int %}
+                {% set playlistUserUpdate = request.args.get('playlistUserUpdate')|int %}
+
+                <form id="UpdatePlaylistInfo" action="UpdatePlaylistInfo/{{playlistIdUpdate}}" method="POST">
+                    <fieldset>
+                        <legend><strong>Update Playlist</strong></legend>
+                        <p>
+                            <label for="playlistId">Playlist Id</label>
+                            <input type="text" name="playlistIdUpdate" value="{{playlistIdUpdate}}" disabled>
+                            {% for playlists in data %}
+                                {% if playlistIdUpdate == playlists.playlistId %}
+                                <label for="playlistTitle">Playlist Title</label>
+                                <input type="text" name="playlistTitle" value="{{playlists.playlistTitle}}">
+                                {% endif %}
+                            {% endfor %}
+
+                            <label for="usernameDropdown">Select Username</label>
+                            <select name="userId">
+                            <option value="" disable selected>Select New User</option>     
+                                {% for users in userUsernameData %}
+                                    <option value="{{users.userId}}" >{{users.username}}</option>                        
+                                {% endfor %}
+                            </select>
+
+                        </p>
+                        <label for="submit">
+                            <button type="submit" name="UpdatePlaylistInfo" class="btn">Update Playlist</button>
+                            <a href="/playlists.j2" class="btn">Cancel</a>
+                        </label>
+                    </fieldset>
+                </form>
+            {% endif %}
+         </div>
+
+        <!-- Delete Playlists-->
+         <div id="delete" class="formContainer">
+            <!-- Checks if playlistId value exists and assigns it to playlistId-->
+            {% if request.args.get('playlistId') %}
+                {% set playlistId = request.args.get('playlistId') %}
+
+                <h2 class="DeleteWarning">Warning! This is an irreversible action.</h2>
+                
+                <form id="DeletePlaylist" action="DeletePlaylistInfo/{{playlistId}}" method="POST">
+                    <fieldset>
+                        <legend><strong>Delete Playlist Info</strong></legend>
+                        <p class="DeleteIntruc">
+                            Check the box to confirm
+                        </p>
+                        <p>
+                            <input type="checkbox" name="ConfirmDelete" required>
+                            <label for="ConfirmDelete">Yes, delete from database</label>
+                        </p><br>
+
+                        <p>
+                            <label for="playlistId">Playlist Id</label>
+                            <input type="text" name="playlistId" value="{{playlistId}}" disabled>
+                        </p>
+                        <p>
+                            <button type="submit" name="DeleteNewPlaylist" class="btn">Delete</button>
+                            <a href="/playlists.j2" class="btn">Cancel</a>
+                        </p>
+                    </fieldset>
+                </form>
+            {% endif %}
+         </div>
+    </body>
+</html>
